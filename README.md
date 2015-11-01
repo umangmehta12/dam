@@ -21,14 +21,14 @@ Compilation and Execution Steps:
 
     (Keep the directory structure as it is after compilation.)
 * Run the dam shell file with the following command format:
-    
-    ./dam -f <pathname> -f <pathname>
-    ./dam -d <pathname> -d <pathname>
-    ./dam -f <pathname> -d <pathname>
-    ./dam -d <pathname> -f <pathname>
-    
-    where <pathname> is a Linux path name. If a <pathname> is
-    preceded by "-f", then the <pathname> must end in ".wav" or
+    ```
+    ./dam -f pathname -f pathname
+    ./dam -d pathname -d pathname
+    ./dam -f pathname -d pathname
+    ./dam -d pathname -f pathname
+    ```
+    where pathname is a Linux path name. If a <pathname> is
+    preceded by "-f", then the pathname must end in ".wav" or
     ".mp3" or ".ogg" and must name a file that already exists on 
     the CCIS shared file system. If a <pathname> is preceded 
     by "-d", it must name a directory that already exists on 
