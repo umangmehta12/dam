@@ -1,30 +1,26 @@
 # dam
 Detecting Audio Misappropriations
-Team:
 
-Bhumi Desai  	 desai.bh@husky.neu.edu
-Ravi Vyas        vyas.rav@husky.neu.edu
-Shamanth Suresh	 suresh.sh@husky.neu.edu
-Umang Mehta      mehta.u@husky.neu.edu	
+This Software is designed to detect the matching between two audio files so that the company is secured of piracy or stealing of audio files.
 
 Compilation and Execution Steps:
 
-[1] Extract the contents of submission package.
+* Extract the contents of submission package.
 
-[2] Once you have extracted the contents of the submission package 
+* Once you have extracted the contents of the submission package 
     you should have all the files in the required folder. 
     (Keep the directory structure as it is.)
 
-[3] To compile the software your present working directory
+* To compile the software your present working directory
     should be the folder containing the program. 
 
-[4] Then execute the command shown below; to setup the enviroment for
+* Then execute the command shown below; to setup the enviroment for
     executing the software.
     
     make
 
     (Keep the directory structure as it is after compilation.)
-[5] Run the dam shell file with the following command format:
+* Run the dam shell file with the following command format:
     
     ./dam -f <pathname> -f <pathname>
     ./dam -d <pathname> -d <pathname>
@@ -42,14 +38,14 @@ Compilation and Execution Steps:
 
     Based on the input provided the output will be displayed.
 
-[6] To restore back the previus state before the use of software
+* To restore back the previus state before the use of software
     execute the command shown below;
 
    make clean
 
 Credits for 3rd party Software used:
 
-[1] For performing FFT, We have used the following third 
+* For performing FFT, We have used the following third 
     party source code
 
     https://www.ee.columbia.edu/~ronw/code/MEAPsoft/doc/html/FFT
@@ -60,7 +56,7 @@ Credits for 3rd party Software used:
     permission by professor and authorized to use this code 
     in our project.
 
-[2] For converting the input recording to canonical form.
+* For converting the input recording to canonical form.
     We have used following third party softwares;
     (i)   oggdec 
     (ii)  lame
