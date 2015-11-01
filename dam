@@ -1,0 +1,198 @@
+#!/bin/bash
+
+declare -A ConvertedDir1
+declare -A ConvertedDir2
+
+function converter() {
+   fullpath=$1
+   filename="${fullpath##*/}"
+   extension="${filename##*.}"
+   basedir="${fullpath%$filename}"
+   filename_without_ext="${filename%.*}"
+
+   if [ $extension != "ogg" -a $extension != "mp3" -a $extension != "wav" ]; then
+      echo ERROR: Illegal File input     
+      exit 1
+   fi
+   if [ $extension != "ogg" ]; then
+       /course/cs5500f14/bin/lame --resample 44.1 -m  m $fullpath /tmp/junk2/$filename_without_ext.mp3 &>/tmp/junk/logs.txt
+   fi
+
+
+   if [ $extension == "mp3" ]; then
+        #/course/cs5500f14/bin/lame --resample 44.1 -m  m $fullpath ./junk2/$filename_without_ext.mp3 &>./junk/logs.txt
+        #filename=$filename+
+        /course/cs5500f14/bin/lame --decode  /tmp/junk2/$filename_without_ext.mp3 /tmp/junk/$2/"$filename_without_ext"_mp3.wav  &> /tmp/junk/logs.txt
+        #this changed
+        /course/cs5500f14/bin/wav -bitwidth 16  /tmp/junk/$2/"$filename_without_ext"_mp3.wav /tmp/junk/$2/"$filename_without_ext"_mp3.wav  &> /tmp/junk/logs.txt
+   elif [ $extension == "ogg" ]; then
+        oggdec $fullpath -o /tmp/junk2/"$filename_without_ext"_ogg.wav  &>/tmp/junk/logs.txt
+        /course/cs5500f14/bin/lame --resample 44.1 -m  m /tmp/junk2/"$filename_without_ext"_ogg.wav /tmp/junk2/"$filename_without_ext"_ogg.mp3 &> /tmp/junk/logs.txt
+        /course/cs5500f14/bin/lame --decode  /tmp/junk2/"$filename_without_ext"_ogg.mp3 /tmp/junk/$2/"$filename_without_ext"_ogg.wav  &> /tmp/junk/logs.txt
+        /course/cs5500f14/bin/wav -bitwidth 16  /tmp/junk/$2/"$filename_without_ext"_ogg.wav /tmp/junk/$2/"$filename_without_ext"_ogg.wav  &> /tmp/junk/logs.txt
+   else
+        /course/cs5500f14/bin/lame --decode  /tmp/junk2/$filename_without_ext.mp3 /tmp/junk/$2/$filename_without_ext.wav  &> /tmp/junk/logs.txt
+        #this is changed
+        /course/cs5500f14/bin/wav -bitwidth 16  /tmp/junk/$2/"$filename_without_ext"_mp3.wav /tmp/junk/$2/"$filename_without_ext"_mp3.wav  &> /tmp/junk/logs.txt
+
+   fi
+   rm -rf /tmp/junk2/*
+   if [ "$extension" == "mp3" ]; then
+     return 1
+   else
+      return 0
+   fi
+}
+
+
+function Dir1() {
+
+     file=$1
+     dir="dir1"
+     filename=${file##*/}
+     extension="${filename##*.}"
+
+     converter $file $dir  
+     converted=$?
+
+     if [ $extension == "mp3" ]; then
+        filename_with_ext="${filename%.*}"_mp3.wav      
+     else
+        filename_with_ext="${filename%.*}".wav
+     fi
+     ConvertedDir1["$filename_with_ext"]=$converted
+
+}
+
+function Dir2() {
+
+     file=$1
+     dir="dir2"
+     filename=${file##*/}
+     extension="${filename##*.}"
+
+     converter $file $dir
+     converted=$?
+     #filename=${file##*/}
+     #extension="${filename##*.}"
+     
+     if [ $extension == "mp3" ]; then
+        filename_with_ext="${filename%.*}"_mp3.wav
+     else
+        filename_with_ext="${filename%.*}".wav
+     fi
+
+     ConvertedDir2["$filename_with_ext"]=$converted
+
+}
+
+
+function teardown() {
+     rm -rf /tmp/junk
+     rm -rf /tmp/junk2
+}
+
+function comparefiles() {
+   echo "java MatchAudio "${ConvertedDir1[$1]}" /tmp/junk/dir1/$1 "${ConvertedDir2[$2]}" /tmp/junk/dir2/$2"
+}
+
+function comparefilesbydir() {
+  java MatchAudio /tmp/junk/dir1 /tmp/junk/dir2
+}
+
+
+
+teardown
+mkdir -p /tmp/junk2 /tmp/junk/dir1 /tmp/junk/dir2
+
+if [ $# -eq 4 ]; then
+ 
+  if [ "$1" == "-f" -a "$3" == "-f" ]; then
+     Dir1 $2 
+     Dir2 $4
+     if [ ! -f $2 -o ! -f $4  ]; then
+        echo "ERROR:File does not exist."
+        exit 1
+     fi
+
+     fl1=`ls -rt /tmp/junk/dir1`
+     fl2=`ls -rt /tmp/junk/dir2`
+     comparefilesbydir
+
+  elif [ "$1" == "-f" -a "$3" == "-d" ]; then
+    count2=`ls -l $4 2>/dev/null | wc -l`
+     if [ ! -f $2 ]; then
+     echo ERROR: File does not exist
+     exit 1
+    fi
+    if [ ! -d $4 ]; then
+     echo ERROR: No such directory
+     exit 1
+    fi  
+    if [ $count2 -eq 0 ]; then
+     echo ERROR: No file in the directory
+     exit 1
+    fi
+    fl1=`ls -rt /tmp/junk/dir1`
+    Dir1 $2 
+    for file in `ls -rt $4` 
+      do
+         Dir2 $4/$file 
+      done
+  
+    comparefilesbydir
+
+  elif [ "$1" == "-d" -a "$3" == "-f" ]; then
+    count1=`ls -l $2 2>/dev/null | wc -l`
+    if [ $count1 -eq 0 ]; then
+     echo ERROR: No file in the directory
+     exit 1
+    fi
+    if [ ! -d $2 ]; then
+     echo ERROR: Given input is not a directory
+     exit 1
+    fi 
+    if [ ! -f $4 ]; then
+     echo ERROR: File does not exist
+     exit 1
+    fi
+    fl2=`ls -rt /tmp/junk/dir2`
+    for file in `ls -rt $2`
+      do
+         Dir1 $2/$file 
+      done
+    Dir2 $4 $dir2
+    comparefilesbydir 
+
+  elif [ "$1" == "-d" -a "$3" == "-d" ]; then
+   if [ ! -d $2 -o ! -d $4 ]; then
+     echo ERROR: No such directory
+     exit 1
+   fi
+   count1=`ls -l $2 2>/dev/null | wc -l`
+   count2=`ls -l $4 2>/dev/null | wc -l`
+   if [ $count1 -eq 1 -o $count2 -eq 1 ]; then
+     echo ERROR: No file in the directory
+     exit 1
+    fi
+    for file1 in `ls -rt $2`
+      do
+         Dir1 $2/$file1
+      done
+    for file2 in `ls -rt $4`
+      do
+         Dir2 $4/$file2 
+      done
+    comparefilesbydir 
+  else
+    echo "ERROR: incorrect flags"
+    exit 1
+  fi
+else
+   echo "ERROR: incorrect number of arguments"
+   exit 1
+fi
+
+teardown
+
+
