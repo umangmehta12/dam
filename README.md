@@ -1,2 +1,73 @@
 # dam
-Detecting Audio Misappropriations 
+Detecting Audio Misappropriations
+Team:
+
+Bhumi Desai  	 desai.bh@husky.neu.edu
+Ravi Vyas        vyas.rav@husky.neu.edu
+Shamanth Suresh	 suresh.sh@husky.neu.edu
+Umang Mehta      mehta.u@husky.neu.edu	
+
+Compilation and Execution Steps:
+
+[1] Extract the contents of submission package.
+
+[2] Once you have extracted the contents of the submission package 
+    you should have all the files in the required folder. 
+    (Keep the directory structure as it is.)
+
+[3] To compile the software your present working directory
+    should be the folder containing the program. 
+
+[4] Then execute the command shown below; to setup the enviroment for
+    executing the software.
+    
+    make
+
+    (Keep the directory structure as it is after compilation.)
+[5] Run the dam shell file with the following command format:
+    
+    ./dam -f <pathname> -f <pathname>
+    ./dam -d <pathname> -d <pathname>
+    ./dam -f <pathname> -d <pathname>
+    ./dam -d <pathname> -f <pathname>
+    
+    where <pathname> is a Linux path name. If a <pathname> is
+    preceded by "-f", then the <pathname> must end in ".wav" or
+    ".mp3" or ".ogg" and must name a file that already exists on 
+    the CCIS shared file system. If a <pathname> is preceded 
+    by "-d", it must name a directory that already exists on 
+    the CCIS shared file system and contains nothing but 
+    files whose pathnames would be legal following a 
+    "-f"option.
+
+    Based on the input provided the output will be displayed.
+
+[6] To restore back the previus state before the use of software
+    execute the command shown below;
+
+   make clean
+
+Credits for 3rd party Software used:
+
+[1] For performing FFT, We have used the following third 
+    party source code
+
+    https://www.ee.columbia.edu/~ronw/code/MEAPsoft/doc/html/FFT
+    _8java-source.html
+
+    As per the instructor’s note (Java source code for FFT) on 
+    piazza on 15th October 2014, we have been granted 
+    permission by professor and authorized to use this code 
+    in our project.
+
+[2] For converting the input recording to canonical form.
+    We have used following third party softwares;
+    (i)   oggdec 
+    (ii)  lame
+    (iii) wav
+
+(Note: Specification of our canonical form our defination 
+       for the canonical form is wav file with sampling rate 
+       of 44100 samples/second in mono mode with bit-width of 
+       16 bits/seconds.)
+
